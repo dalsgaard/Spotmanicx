@@ -1,4 +1,6 @@
 var restify = require('restify');
+var mongo = require('mongodb');
+var _ = require('underscore');
 
 var redis = require('redis').createClient();
 redis.on('error', function (err) {
@@ -8,27 +10,77 @@ redis.on('error', function (err) {
 var Forecast = require('./lib/forecast').Forecast;
 var forecast = new Forecast(redis);
 
+var Spot = require('./lib/spot').Spot;
 
-function respond(req, res, next) {
-  res.send('hello ' + req.params.name);
-}
+var server = restify.createServer();
+server.use(restify.bodyParser());
 
-function createSpot(req, res, next) {
-	console.log(req.body.foo);
-	res.send(201);
-}
+server.get(/\/site\/?.*/, restify.serveStatic({
+  directory: './public'
+}));
 
 function getForecast(req, res, next) {
 
 }
 
-var server = restify.createServer();
-server.use(restify.bodyParser());
+mongo.MongoClient.connect('mongodb://localhost:27017/spot', function(error, db) {
+  if(error) throw error;
+  console.log('Connected to the database');
 
-server.get('/hello/:name', respond);
-server.head('/hello/:name', respond);
+	var spot = new Spot(forecast, db);
 
-server.post('/spot', createSpot);
+	function createSpot(req, res, next) {
+		spot.create(req.body, function(error, doc) {
+			if (error) {
+				console.log(error);
+				res.send(500);
+			} else {
+				res.send(201, doc);
+			}
+		});
+	}
+	server.post('/spots', createSpot);
+
+	function allSpots(req, res, next) {
+		spot.all(function(error, docs) {
+			if (error) {
+				console.log(error);
+				res.send(500);
+			} else {
+				res.send(200, docs);
+			}
+		});
+	}
+	server.get('/spots', allSpots);
+
+	function spotsInBox(req, res, next) {
+		var box = _.map(req.params[0].split(','), function(e) {
+			return parseFloat(e);
+		});
+		spot.box(box, function(error, docs) {
+			if (error) {
+				console.log(error);
+				res.send(500);
+			} else {
+				res.send(200, docs);
+			}
+		});
+	}
+	server.get(/^\/spots\/box\/(.+)$/, spotsInBox);
+
+	function getSpot(req, res, next) {
+		spot.get(req.params.id, function(error, doc) {
+			if (error) {
+				console.log(error);
+				res.send(500);
+			} else {
+				res.send(200, doc);
+			}
+		});
+	}
+	server.get('/spots/:id', getSpot);
+
+});
 
 server.listen(8080, function() {
   console.log('%s listening at %s', server.name, server.url);

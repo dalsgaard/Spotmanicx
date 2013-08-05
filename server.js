@@ -15,13 +15,21 @@ var Spot = require('./lib/spot').Spot;
 var server = restify.createServer();
 server.use(restify.bodyParser());
 
-server.get(/\/site\/?.*/, restify.serveStatic({
+server.get(/^\/site\/?.*/, restify.serveStatic({
   directory: './public'
 }));
 
 function getForecast(req, res, next) {
-
+	forecast.get(req.params[0], function(error, doc) {
+		if (error) {
+			console.log(error);
+			res.send(500);
+		} else {
+			res.send(200, doc);
+		}
+	});
 }
+server.get(/^\/forecast\/(.+)$/, getForecast);
 
 mongo.MongoClient.connect('mongodb://localhost:27017/spot', function(error, db) {
   if(error) throw error;

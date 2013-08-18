@@ -14,15 +14,9 @@
   "bugs": {
     "url": "https://github.com/dalsgaard/Server/issues"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/dalsgaard/Server/blob/master/LICENSE-MIT"
-    }
-  ],
-  "main": "lib/playground-zoo",
+  "main": "server.js",
   "engines": {
-    "node": ">= 0.8.0"
+    "node": ">= 0.10.0"
   },
   "scripts": {
     "test": "grunt nodeunit"
@@ -32,7 +26,13 @@
     "grunt-contrib-nodeunit": "~0.2.0",
     "grunt-contrib-watch": "~0.4.0",
     "grunt": "~0.4.1",
-    "optimist": "~0.6.0"
+    "optimist": "~0.6.0",
+    "grunt-mocha-test": "~0.6.2",
+    "should": "~1.2.2",
+    "sinon": "~1.7.3",
+    "proxyquire": "~0.5.0",
+    "chai": "~1.7.2",
+    "grunt-browserify": "~1.2.1"
   },
   "keywords": [],
   "dependencies": {
@@ -42,6 +42,7 @@
     "restify": "~2.6.0",
     "cheerio": "~0.12.0",
     "async": "~0.2.9",
-    "underscore": "~1.5.1"
+    "underscore": "~1.5.1",
+    "mustache": "~0.7.2"
   }
 }

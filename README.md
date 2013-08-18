@@ -25,3 +25,5 @@ _(Nothing yet)_
 ## License
 Copyright (c) 2013 Kim Dalsgaard  
 Licensed under the MIT license.
+
+Odense Tlf 65412413

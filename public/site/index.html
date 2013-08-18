@@ -7,25 +7,26 @@
        width: 600px;
       }
     </style>
+    <link rel="stylesheet" href="reset.css" />
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="jquery-2.0.3.min.js"></script>
+    <script src="bundle.js"></script>
   </head>
   <body>
-    <div id="map"></div>
+    <section>
+      <div id="map"></div>
+      <section id="buttons">
+        <ul>
+          <li class="center">Center</li>
+          <li class="center">Save</li>
+        </ul>
+      </section>
+      <section>
+        <ul id='forecast'/>
+      </section>
+    </section>
   </body>
-  <script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
   <script>
-  	var map = L.map('map').setView([56, 8.5], 10);
-  	L.tileLayer('http://{s}.tile.cloudmade.com/40272a6f04864a119ac95f9c01199fe4/997/256/{z}/{x}/{y}.png', {
-			maxZoom: 18,
-			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>'
-		}).addTo(map);
-		var marker = L.marker([56, 8.5], {draggable: true});
-		marker.on('dragend', function(e) {
-			console.log(marker.getLatLng().toString());
-		});
-		marker.addTo(map);
-		map.on('moveend', function(e) {
-    	console.log(map.getBounds().toBBoxString());
-		});
   </script>
 </html>

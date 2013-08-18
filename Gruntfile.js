@@ -4,9 +4,6 @@ module.exports = function(grunt) {
 
   // Project configuration.
   grunt.initConfig({
-    nodeunit: {
-      files: ['test/**/*_test.js'],
-    },
     jshint: {
       options: {
         jshintrc: '.jshintrc'
@@ -21,6 +18,23 @@ module.exports = function(grunt) {
         src: ['test/**/*.js']
       },
     },
+    mochaTest: {
+      test: {
+        options: {
+          reporter: 'spec'
+        },
+        src: ['test/**/*_test.js']
+      }
+    },
+    browserify: {
+      basic: {
+        src: ['client/lib/**/*.js'],
+        dest: 'public/site/bundle.js',
+        options: {
+          debug: true
+        }
+      }
+    },
     watch: {
       gruntfile: {
         files: '<%= jshint.gruntfile.src %>',
@@ -34,13 +48,17 @@ module.exports = function(grunt) {
         files: '<%= jshint.test.src %>',
         tasks: ['jshint:test', 'nodeunit']
       },
-    },
+    }
   });
 
   // These plugins provide necessary tasks.
-  grunt.loadNpmTasks('grunt-contrib-nodeunit');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-mocha-test');
+  grunt.loadNpmTasks('grunt-browserify');
+
+  grunt.registerTask('test', 'mochaTest');
+  grunt.registerTask('site', 'browserify');
 
   // Default task.
   grunt.registerTask('default', ['jshint', 'nodeunit']);

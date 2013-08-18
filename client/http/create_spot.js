@@ -7,7 +7,7 @@ var location = geoUtils.createPoint(argv.lon, argv.lat);
 var doc = {
 	name: argv.name,
 	location: location,
-	directions: [200, 340]
+	directions: [[200, 340]]
 };
 
 var client = restify.createJsonClient({

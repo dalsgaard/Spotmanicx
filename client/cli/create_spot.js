@@ -27,7 +27,7 @@ client.connect('mongodb://localhost:27017/spot', function(error, db) {
 	var doc = {
 		name: argv.name,
 		location: location,
-		directions: [200, 340]
+		directions: [[200, 340]]
 	};
 	spot.create(doc, function(error, doc) {
 		if (error) {

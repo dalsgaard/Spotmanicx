@@ -13,23 +13,28 @@ var forecast = new Forecast(redis);
 var Spot = require('./lib/spot').Spot;
 
 var server = restify.createServer();
-server.use(restify.bodyParser());
+server.use(restify.bodyParser({ mapParams: false }));
 
 server.get(/^\/site\/?.*/, restify.serveStatic({
   directory: './public'
 }));
 
 function getForecast(req, res, next) {
-	forecast.get(req.params[0], function(error, doc) {
+	var id = req.params[0];
+	forecast.get(id, function(error, doc) {
 		if (error) {
 			console.log(error);
-			res.send(500);
+			if (error == 404) {
+				res.send(404);
+			} else {
+				res.send(500);
+			}
 		} else {
 			res.send(200, doc);
 		}
 	});
 }
-server.get(/^\/forecast\/(.+)$/, getForecast);
+server.get(/^\/forecasts\/(.+)$/, getForecast);
 
 mongo.MongoClient.connect('mongodb://localhost:27017/spot', function(error, db) {
   if(error) throw error;
@@ -87,6 +92,30 @@ mongo.MongoClient.connect('mongodb://localhost:27017/spot', function(error, db) 
 		});
 	}
 	server.get('/spots/:id', getSpot);
+
+	function updateName(req, res, next) {
+		spot.updateName(req.params.id, req.body, function(error, doc) {
+			if (error) {
+				console.log(error);
+				res.send(500);
+			} else {
+				res.send(200, doc);
+			}
+		});
+	}
+	server.put('/spots/:id/name', updateName);
+
+	function updateDirections(req, res, next) {
+		spot.updateDirections(req.params.id, req.body, function(error, doc) {
+			if (error) {
+				console.log(error);
+				res.send(500);
+			} else {
+				res.send(200, doc);
+			}
+		});
+	}
+	server.put('/spots/:id/directions', updateDirections);
 
 });
 
